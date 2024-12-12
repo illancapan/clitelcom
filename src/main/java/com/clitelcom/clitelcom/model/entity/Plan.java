@@ -20,9 +20,6 @@ public class Plan {
     private String name;
     private Double price;
 
-    @ElementCollection
-    private List<String> serviceFacilitated;
-
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL,orphanRemoval = true )
-    private List<Contract> contracts;
+    private List<Contract> contract;
 }

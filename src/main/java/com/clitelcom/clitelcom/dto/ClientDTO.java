@@ -1,4 +1,4 @@
-package com.clitelcom.clitelcom.model.dto;
+package com.clitelcom.clitelcom.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +18,8 @@ public class ClientDTO {
     private String name;
     private String run;
     private String address;
-    private LocalDate birthdate;
+    private LocalDate birthDate;
 
-    private List<ContractDTO> contractDTOS;
+    private List<ContractDTO> contractDTO;
+
 }

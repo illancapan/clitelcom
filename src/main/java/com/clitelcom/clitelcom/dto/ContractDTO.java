@@ -1,4 +1,4 @@
-package com.clitelcom.clitelcom.model.dto;
+package com.clitelcom.clitelcom.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,7 +13,8 @@ public class ContractDTO {
 
      private Long id;
      private ClientDTO client;
-     private PlanDTO planDTO;
-     private LocalDate activationDate;
-     private Boolean active;
+     private PlanDTO plan;
+     private LocalDate startDate;
+     private LocalDate endDate;
+     private Boolean isActive;
 }

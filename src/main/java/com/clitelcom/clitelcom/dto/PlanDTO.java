@@ -1,4 +1,4 @@
-package com.clitelcom.clitelcom.model.dto;
+package com.clitelcom.clitelcom.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,5 +15,4 @@ public class PlanDTO {
     private String name;
     private Double price;
     private List<String> serviceFacilitated;
-    private List<ContractDTO> contractDTOS;
 }

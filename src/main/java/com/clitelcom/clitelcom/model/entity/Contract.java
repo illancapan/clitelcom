@@ -1,6 +1,11 @@
 package com.clitelcom.clitelcom.model.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,6 +30,7 @@ public class Contract {
      @JoinColumn(name = "plan_id", nullable = false)
      private Plan plan;
 
-     private LocalDate activationDate;
-     private Boolean active;
+     private LocalDate startDate;
+     private LocalDate endDate;
+     private Boolean isActive;
 }
