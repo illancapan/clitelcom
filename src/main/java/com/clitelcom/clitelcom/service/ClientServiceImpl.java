@@ -7,6 +7,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class ClientServiceImpl implements ClientService {
 
@@ -27,7 +30,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ClientDTO updateClient(Long clientId, ClientDTO clientDTO) {
         Client existingClient = clientRepository.findById(clientId)
-                .orElseThrow(()-> new RuntimeException("Client not found"));
+                .orElseThrow(() -> new RuntimeException("Client not found"));
 
         existingClient.setName(clientDTO.getName());
         existingClient.setRun(clientDTO.getRun());
@@ -36,23 +39,33 @@ public class ClientServiceImpl implements ClientService {
 
         Client updatedClient = clientRepository.save(existingClient);
 
-        return modelMapper.map(updatedClient,ClientDTO.class);
+        return modelMapper.map(updatedClient, ClientDTO.class);
     }
 
     @Override
-    public ClientDTO getClientByID(Long clientId) {
+    public ClientDTO getClientById(Long clientId) {
         Client client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new RuntimeException("User Not Found"));
         return modelMapper.map(client, ClientDTO.class);
     }
 
+    @Override
+    public List<ClientDTO> getClientByName(String name) {
+        List<Client> clients = clientRepository.findByNameContainingIgnoreCase(name);
+        if (clients.isEmpty()) {
+            throw new RuntimeException("No clients found with the given name");
+        }
+        return clients.stream()
+                .map(client -> modelMapper.map(client, ClientDTO.class))
+                .collect(Collectors.toList());
+    }
 
     @Override
     public ClientDTO deleteClientById(Long clientId) {
         Client existingClient = clientRepository.findById(clientId)
                 .orElseThrow(() -> new RuntimeException("User Not Found"));
         clientRepository.delete(existingClient);
-        return modelMapper.map(existingClient,ClientDTO.class);
+        return modelMapper.map(existingClient, ClientDTO.class);
     }
 }
 

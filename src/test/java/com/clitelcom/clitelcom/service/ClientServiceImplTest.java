@@ -13,10 +13,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -60,7 +63,6 @@ class ClientServiceImplTest {
         );
     }
 
-
     @Test
     void testCreateClient_ShouldReturnClientDTO_WhenClientIsCreated() {
         when(clientRepository.save(any(Client.class))).thenReturn(client);
@@ -77,7 +79,6 @@ class ClientServiceImplTest {
         verify(modelMapper, times(1)).map(clientDTO, Client.class);
         verify(modelMapper, times(1)).map(client, ClientDTO.class);
     }
-
 
     @Test
     void testUpdateClient_ShouldReturnUpdatedClientDTO_WhenClientIsUpdated() {
@@ -141,7 +142,7 @@ class ClientServiceImplTest {
         when(clientRepository.findById(1L)).thenReturn(Optional.of(client));
         when(modelMapper.map(client, ClientDTO.class)).thenReturn(clientDTO);
 
-        ClientDTO result = clientServiceImpl.getClientByID(1L);
+        ClientDTO result = clientServiceImpl.getClientById(1L);
 
         assertNotNull(result);
         assertEquals(clientDTO.getId(), result.getId());
@@ -161,4 +162,79 @@ class ClientServiceImplTest {
         verify(clientRepository).findById(client.getId());
         verify(clientRepository).delete(client);
     }
+
+    @Test
+    void testGetClientByName_ShouldReturnClientDTOList_WhenClientsExist() {
+        String name = "Igor";
+
+        Client client1 = new Client(
+                1L,
+                "Igor",
+                "12345678-9",
+                "Calle siempre viva",
+                LocalDate.of(1990, 1, 1),
+                null
+        );
+
+        Client client2 = new Client(
+                2L,
+                "Igorito",
+                "98765432-1",
+                "Otra dirección",
+                LocalDate.of(1992, 2, 2),
+                null
+        );
+
+        ClientDTO clientDTO1 = new ClientDTO(
+                1L,
+                "Igor",
+                "12345678-9",
+                "Calle siempre viva",
+                LocalDate.of(1990, 1, 1),
+                null
+        );
+
+        ClientDTO clientDTO2 = new ClientDTO(
+                2L,
+                "Igorito",
+                "98765432-1",
+                "Otra dirección",
+                LocalDate.of(1992, 2, 2),
+                null
+        );
+
+        List<Client> clients = List.of(client1, client2);
+        List<ClientDTO> expectedDTOs = List.of(clientDTO1, clientDTO2);
+
+        when(clientRepository.findByNameContainingIgnoreCase(name)).thenReturn(clients);
+        when(modelMapper.map(client1, ClientDTO.class)).thenReturn(clientDTO1);
+        when(modelMapper.map(client2, ClientDTO.class)).thenReturn(clientDTO2);
+
+        List<ClientDTO> result = clientServiceImpl.getClientByName(name);
+
+        assertNotNull(result);
+        assertEquals(expectedDTOs.size(), result.size());
+        assertEquals(expectedDTOs.get(0).getName(), result.get(0).getName());
+        assertEquals(expectedDTOs.get(1).getName(), result.get(1).getName());
+
+        verify(clientRepository, times(1)).findByNameContainingIgnoreCase(name);
+        verify(modelMapper, times(1)).map(client1, ClientDTO.class);
+        verify(modelMapper, times(1)).map(client2, ClientDTO.class);
+    }
+
+    @Test
+    void testGetClientByName_ShouldThrowException_WhenNoClientsFound() {
+        String name = "NonExistentName";
+
+        when(clientRepository.findByNameContainingIgnoreCase(name)).thenReturn(Collections.emptyList());
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            clientServiceImpl.getClientByName(name);
+        });
+
+        assertEquals("No clients found with the given name", exception.getMessage());
+
+        verify(clientRepository, times(1)).findByNameContainingIgnoreCase(name);
+    }
+
 }
