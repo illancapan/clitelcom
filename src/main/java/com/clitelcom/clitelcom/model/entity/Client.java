@@ -26,7 +26,7 @@ public class Client {
     private String name;
     private String run;
     private String address;
-    private LocalDate birthdate;
+    private LocalDate birthDate;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Contract> contract;

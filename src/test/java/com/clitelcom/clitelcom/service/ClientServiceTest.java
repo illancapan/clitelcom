@@ -26,7 +26,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ClientServiceImplTest {
+class ClientServiceTest {
 
     @Mock
     private ClientRepository clientRepository;
@@ -35,7 +35,7 @@ class ClientServiceImplTest {
     private ModelMapper modelMapper;
 
     @InjectMocks
-    private ClientServiceImpl clientServiceImpl;
+    private ClientService clientService;
 
     private Client client;
     private ClientDTO clientDTO;
@@ -69,7 +69,7 @@ class ClientServiceImplTest {
         when(modelMapper.map(clientDTO, Client.class)).thenReturn(client);
         when(modelMapper.map(client, ClientDTO.class)).thenReturn(clientDTO);
 
-        ClientDTO result = clientServiceImpl.createClient(clientDTO);
+        ClientDTO result = clientService.createClient(clientDTO);
 
         assertNotNull(result);
         assertEquals(clientDTO.getName(), result.getName());
@@ -124,7 +124,7 @@ class ClientServiceImplTest {
         when(clientRepository.save(existingClient)).thenReturn(updatedClient);
         when(modelMapper.map(updatedClient, ClientDTO.class)).thenReturn(expectedDTO);
 
-        ClientDTO result = clientServiceImpl.updateClient(clientId, inputDTO);
+        ClientDTO result = clientService.updateClient(clientId, inputDTO);
 
         assertNotNull(result);
         assertEquals(expectedDTO.getName(), result.getName());
@@ -142,7 +142,7 @@ class ClientServiceImplTest {
         when(clientRepository.findById(1L)).thenReturn(Optional.of(client));
         when(modelMapper.map(client, ClientDTO.class)).thenReturn(clientDTO);
 
-        ClientDTO result = clientServiceImpl.getClientById(1L);
+        ClientDTO result = clientService.getClientById(1L);
 
         assertNotNull(result);
         assertEquals(clientDTO.getId(), result.getId());
@@ -157,7 +157,7 @@ class ClientServiceImplTest {
     void testDeleteClientDTO_WhenUserExist() {
         when(clientRepository.findById(client.getId())).thenReturn(Optional.of(client));
 
-        clientServiceImpl.deleteClientById(client.getId());
+        clientService.deleteClientById(client.getId());
 
         verify(clientRepository).findById(client.getId());
         verify(clientRepository).delete(client);
@@ -210,7 +210,7 @@ class ClientServiceImplTest {
         when(modelMapper.map(client1, ClientDTO.class)).thenReturn(clientDTO1);
         when(modelMapper.map(client2, ClientDTO.class)).thenReturn(clientDTO2);
 
-        List<ClientDTO> result = clientServiceImpl.getClientByName(name);
+        List<ClientDTO> result = clientService.getClientByName(name);
 
         assertNotNull(result);
         assertEquals(expectedDTOs.size(), result.size());
@@ -229,7 +229,7 @@ class ClientServiceImplTest {
         when(clientRepository.findByNameContainingIgnoreCase(name)).thenReturn(Collections.emptyList());
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            clientServiceImpl.getClientByName(name);
+            clientService.getClientByName(name);
         });
 
         assertEquals("No clients found with the given name", exception.getMessage());

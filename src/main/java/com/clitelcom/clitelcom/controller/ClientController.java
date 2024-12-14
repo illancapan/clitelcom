@@ -3,6 +3,7 @@ package com.clitelcom.clitelcom.controller;
 import com.clitelcom.clitelcom.dto.ClientDTO;
 import com.clitelcom.clitelcom.service.ClientService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class ClientController {
 
 
-    private final ClientService clientService;
+    @Autowired
+    private ClientService clientService;
 
     @PostMapping
     public ResponseEntity<ClientDTO> createClient(@RequestBody ClientDTO clientDTO) {
