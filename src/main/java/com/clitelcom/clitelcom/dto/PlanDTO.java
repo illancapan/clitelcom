@@ -16,4 +16,6 @@ public class PlanDTO {
     private Double price;
     private boolean isActive;
     private List<ContractDTO> contract;
+
+    //Eliminar logica de negocio
 }

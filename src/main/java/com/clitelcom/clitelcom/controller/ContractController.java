@@ -4,7 +4,13 @@ import com.clitelcom.clitelcom.dto.ContractDTO;
 import com.clitelcom.clitelcom.service.ContractServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -26,15 +32,16 @@ public class ContractController {
         ContractDTO newContract = contractService.createContract(contractDTO);
         return ResponseEntity.status(201).body(newContract);
     }
+
     @PutMapping("{/id}/deactivate")
-    public ResponseEntity<Void> deactivateContract(@PathVariable Long id){
+    public ResponseEntity<Void> deactivateContract(@PathVariable Long id) {
         contractService.desactiveContract(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{clienteId}/discount")
-    public ResponseEntity<Double> getDiscount(@PathVariable Long clientId){
-        Double discount =contractService.calculateDiscount(clientId);
+    @GetMapping("/{clientId}/discount")
+    public ResponseEntity<Double> getDiscount(@PathVariable Long clientId) {
+        Double discount = contractService.calculateDiscount(clientId);
         return ResponseEntity.ok(discount);
     }
 }

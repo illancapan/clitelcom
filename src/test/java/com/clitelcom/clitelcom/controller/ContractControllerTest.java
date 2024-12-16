@@ -53,14 +53,14 @@ class ContractControllerTest {
                 "12345678-9",
                 null
                 ,LocalDate.now()
-                , "clientA@example.com");
+                , null);
         ClientDTO clientB = new ClientDTO(
                 2L,
                 "Client b",
                 "12345678-9",
                 null
                 ,LocalDate.now()
-                , "clientA@example.com");
+                , null);
 
         List<ContractDTO> mockContracts = Arrays.asList(
                 new ContractDTO(
@@ -94,7 +94,7 @@ class ContractControllerTest {
     void createContract_ShouldCreateNewContract() throws Exception {
         // Arrange
         PlanDTO mockPlanDTO = new PlanDTO(1L, "Plan A", 100.0, true, null);
-        ClientDTO mockClientDTO = new ClientDTO(1L, "Client A", "clientA@example.com");
+        ClientDTO mockClientDTO = new ClientDTO(1L, "Client A", "123456789","Siempre viva",LocalDate.now(), null);
 
         ContractDTO mockContractDTO = new ContractDTO(1L, mockClientDTO, mockPlanDTO, LocalDate.now(), LocalDate.now().plusMonths(1), true);
         when(contractService.createContract(any(ContractDTO.class))).thenReturn(mockContractDTO);

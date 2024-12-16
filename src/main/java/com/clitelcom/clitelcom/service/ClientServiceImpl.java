@@ -47,7 +47,6 @@ public class ClientServiceImpl implements ClienteService {
 
     @Override
     public ClientDTO getClientByName(String name) {
-        // Se devuelve un solo cliente si se encuentra (el primero que coincida con el nombre)
         Client client = clientRepository.findByNameContainingIgnoreCase(name)
                 .stream()
                 .findFirst()
@@ -60,7 +59,8 @@ public class ClientServiceImpl implements ClienteService {
     public ClientDTO deleteClientById(Long clientId) {
         Client existingClient = clientRepository.findById(clientId)
                 .orElseThrow(() -> new RuntimeException("Client Not Found"));
+        ClientDTO deletedCLientDto = modelMapper.map(existingClient, ClientDTO.class);
         clientRepository.delete(existingClient);
-        return null;
+        return deletedCLientDto;
     }
 }

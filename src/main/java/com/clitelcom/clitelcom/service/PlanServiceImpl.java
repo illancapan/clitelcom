@@ -37,7 +37,7 @@ public class PlanServiceImpl implements PlanService {
     @Override
     public void deactivatePlan(Long planId) {
         Plan plan = planRepository.findById(planId)
-                .orElseThrow(()-> new RuntimeException("Plannot found whit id: " + planId));
+                .orElseThrow(()-> new RuntimeException("Cannot found whit id: " + planId));
         plan.setActive(false);
         planRepository.save(plan);
     }
