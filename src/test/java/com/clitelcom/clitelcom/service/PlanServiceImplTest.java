@@ -62,8 +62,8 @@ class PlanServiceImplTest {
                 1L,
                 "Plan A",
                 100.0,
-                true,
-                null);
+                true,null
+                );
         Plan plan2 = new Plan(
                 2L,
                 "Plan B",

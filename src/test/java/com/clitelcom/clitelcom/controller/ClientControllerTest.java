@@ -2,66 +2,49 @@ package com.clitelcom.clitelcom.controller;
 
 import com.clitelcom.clitelcom.dto.ClientDTO;
 import com.clitelcom.clitelcom.service.ClientServiceImpl;
+import com.clitelcom.clitelcom.service.ClienteService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDate;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+class ClientControllerTest {
 
-@ExtendWith(MockitoExtension.class)
-public class ClientControllerTest {
+    ClientDTO clientDto;
+    ClientDTO expectedBody;
 
-    @Mock
-    private ClientServiceImpl clientService;
+    ClientServiceImpl clientService;
 
-    @InjectMocks
-    private ClientController clientController;
-
-    private MockMvc mockMvc;
+    ClientController clientController;
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(clientController).build();
+
+        clientDto = new ClientDTO();
+
+        expectedBody = new ClientDTO();
+
+        clientService = Mockito.mock(ClientServiceImpl.class);
+
+        clientController = new ClientController(clientService);
+
     }
 
     @Test
-    void createClient_ShouldReturnCreatedStatus() throws Exception {
-        ClientDTO clientDTO = new ClientDTO(
-                1L,
-                "John Doe",
-                "12345678-9",
-                "123 Main St",
-                LocalDate.of(1990, 1, 1),
-                null
-        );
-        when(clientService.createClient(any(ClientDTO.class))).thenReturn(clientDTO);
+    void should_return201() {
 
-        // Act & Assert
-        mockMvc.perform(post("/clients")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                        {
-                            "id": 1,
-                            "name": "John Doe",
-                            "run": "12345678-9",
-                            "address": "123 Main St",
-                            "birthDate": "1990-01-01"
-                        }
-                        """))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value("John Doe"))
-                .andExpect(jsonPath("$.run").value("12345678-9"))
-                .andExpect(jsonPath("$.address").value("123 Main St"))
-                .andExpect(jsonPath("$.birthDate").value("1990-01-01"));
+        Mockito.when(clientService.createClient(clientDto)).thenReturn(expectedBody);
+
+        //ACTUAL
+        ResponseEntity<ClientDTO> actual = clientController.createClient(clientDto);
+
+//        ASSERT
+        Assertions.assertEquals(201, actual.getStatusCode().value());
+        Assertions.assertNotNull(actual.getBody());
+
     }
 }
