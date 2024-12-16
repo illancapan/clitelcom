@@ -1,5 +1,6 @@
 package com.clitelcom.clitelcom.model.entity;
 
+import com.clitelcom.clitelcom.dto.ContractDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +21,9 @@ public class Plan {
     private String name;
     private Double price;
 
-    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL,orphanRemoval = true )
+    private boolean isActive = true;
+
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Contract> contract;
+
 }

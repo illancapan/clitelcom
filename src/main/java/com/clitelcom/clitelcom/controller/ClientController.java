@@ -1,7 +1,7 @@
 package com.clitelcom.clitelcom.controller;
 
 import com.clitelcom.clitelcom.dto.ClientDTO;
-import com.clitelcom.clitelcom.service.ClientService;
+import com.clitelcom.clitelcom.service.ClientServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,11 +18,11 @@ public class ClientController {
 
 
     @Autowired
-    private ClientService clientService;
+    private ClientServiceImpl clientServiceImpl;
 
     @PostMapping
     public ResponseEntity<ClientDTO> createClient(@RequestBody ClientDTO clientDTO) {
-        ClientDTO createClient = clientService.createClient(clientDTO);
+        ClientDTO createClient = clientServiceImpl.createClient(clientDTO);
         return new ResponseEntity<>(createClient, HttpStatus.CREATED);
     }
 }

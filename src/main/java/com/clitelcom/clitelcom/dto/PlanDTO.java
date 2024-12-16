@@ -14,5 +14,6 @@ public class PlanDTO {
     private Long id;
     private String name;
     private Double price;
-    private List<String> serviceFacilitated;
+    private boolean isActive;
+    private List<ContractDTO> contract;
 }

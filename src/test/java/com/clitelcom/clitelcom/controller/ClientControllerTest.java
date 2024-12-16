@@ -1,8 +1,7 @@
 package com.clitelcom.clitelcom.controller;
 
 import com.clitelcom.clitelcom.dto.ClientDTO;
-import com.clitelcom.clitelcom.dto.ContractDTO;
-import com.clitelcom.clitelcom.service.ClientService;
+import com.clitelcom.clitelcom.service.ClientServiceImpl;
 import com.clitelcom.clitelcom.model.entity.Client;
 import com.clitelcom.clitelcom.model.entity.Contract;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
-import java.util.Collections;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -27,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ClientControllerTest {
 
     @Mock
-    private ClientService clientService;
+    private ClientServiceImpl clientServiceImpl;
 
     @InjectMocks
     private ClientController clientController;
@@ -61,7 +59,7 @@ public class ClientControllerTest {
         createdClientDTO.setAddress("Calle siempre viva");
         createdClientDTO.setBirthDate(LocalDate.of(2024, 12, 13));
 
-        when(clientService.createClient(clientDTO)).thenReturn(createdClientDTO);
+        when(clientServiceImpl.createClient(clientDTO)).thenReturn(createdClientDTO);
 
         // Act & Assert: Realizando la petición POST y verificando los resultados
         mockMvc.perform(post("/clients")
