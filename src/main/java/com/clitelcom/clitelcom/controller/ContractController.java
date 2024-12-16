@@ -33,13 +33,13 @@ public class ContractController {
         return ResponseEntity.status(201).body(newContract);
     }
 
-    @PutMapping("{/id}/deactivate")
+    @PutMapping("/deactivate/{id}")
     public ResponseEntity<Void> deactivateContract(@PathVariable Long id) {
         contractService.desactiveContract(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{clientId}/discount")
+    @GetMapping("/discount/{clientId}")
     public ResponseEntity<Double> getDiscount(@PathVariable Long clientId) {
         Double discount = contractService.calculateDiscount(clientId);
         return ResponseEntity.ok(discount);
