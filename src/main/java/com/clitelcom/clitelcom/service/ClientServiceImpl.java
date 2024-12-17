@@ -3,18 +3,18 @@ package com.clitelcom.clitelcom.service;
 import com.clitelcom.clitelcom.dto.ClientDTO;
 import com.clitelcom.clitelcom.model.entity.Client;
 import com.clitelcom.clitelcom.repository.ClientRepository;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class ClientServiceImpl implements ClienteService {
 
-    @Autowired
-    private ClientRepository clientRepository;
+    private final ClientRepository clientRepository;
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     @Override
     public ClientDTO createClient(ClientDTO clientDTO) {
