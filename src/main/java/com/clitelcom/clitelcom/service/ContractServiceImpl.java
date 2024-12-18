@@ -5,7 +5,6 @@ import com.clitelcom.clitelcom.model.entity.Contract;
 import com.clitelcom.clitelcom.repository.ContractRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -31,7 +30,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public ContractDTO createContract(ContractDTO contractDTO) {
         contractDTO.setStartDate(LocalDate.now());
-        contractDTO.setIsActive(true);
+        contractDTO.setActive(false);
 
         Contract contract = modelMapper.map(contractDTO, Contract.class);
         contract = contractRepository.save(contract);
@@ -44,7 +43,7 @@ public class ContractServiceImpl implements ContractService {
         Contract contract = contractRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Contract not found"));
 
-        contract.setIsActive(false);
+        contract.setActive(false);
         contract.setEndDate(LocalDate.now());
         contract = contractRepository.save(contract);
 

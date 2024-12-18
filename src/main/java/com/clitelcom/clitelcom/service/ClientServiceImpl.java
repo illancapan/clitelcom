@@ -6,6 +6,7 @@ import com.clitelcom.clitelcom.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -62,4 +63,16 @@ public class ClientServiceImpl implements ClientService {
         clientRepository.delete(existingClient);
         return deletedCLientDto;
     }
+
+    @Transactional
+    @Override
+    public ClientDTO changeClientStatusById(Long id) {
+        Client client = clientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Client not found whit id: " + id));
+
+        client.setActive(!client.isActive());
+        clientRepository.save(client);
+        return modelMapper.map(client, ClientDTO.class);
+    }
+
 }

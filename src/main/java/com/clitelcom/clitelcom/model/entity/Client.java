@@ -27,6 +27,7 @@ public class Client {
     private String run;
     private String address;
     private LocalDate birthDate;
+    private boolean isActive;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Contract> contracts;

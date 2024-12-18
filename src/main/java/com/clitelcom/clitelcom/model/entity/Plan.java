@@ -21,7 +21,7 @@ public class Plan {
     private String name;
     private Double price;
 
-    private boolean isActive = true;
+    private boolean isActive;
 
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Contract> contracts;

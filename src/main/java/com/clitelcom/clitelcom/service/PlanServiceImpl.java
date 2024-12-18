@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,11 +35,12 @@ public class PlanServiceImpl implements PlanService {
         return modelMapper.map(newPlan,PlanDTO.class);
     }
 
+    @Transactional
     @Override
     public void deactivatePlan(Long planId) {
         Plan plan = planRepository.findById(planId)
                 .orElseThrow(()-> new RuntimeException("Cannot found whit id: " + planId));
-        plan.setActive(false);
+        plan.setActive(!plan.isActive());
         planRepository.save(plan);
     }
 

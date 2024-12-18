@@ -8,4 +8,5 @@ public interface ClientService {
     ClientDTO getClientById(Long id);
     ClientDTO getClientByName(String name);
     ClientDTO deleteClientById(Long id);
+    ClientDTO changeClientStatusById(Long id);
 }

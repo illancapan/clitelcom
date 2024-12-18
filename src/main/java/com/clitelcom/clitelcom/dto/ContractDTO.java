@@ -29,5 +29,6 @@ public class ContractDTO {
      @JsonFormat(pattern = "yyyy-MM-dd")
      private LocalDate endDate;
 
-     private Boolean isActive;
+     private boolean isActive;
+
 }

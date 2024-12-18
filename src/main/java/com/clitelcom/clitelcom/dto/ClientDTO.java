@@ -25,7 +25,8 @@ public class ClientDTO {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
 
-    @JsonManagedReference
+    private boolean isActive;
+
     private List<ContractDTO> contractsDTO;
 
 

@@ -32,5 +32,5 @@ public class Contract {
 
      private LocalDate startDate;
      private LocalDate endDate;
-     private Boolean isActive;
+     private boolean isActive;
 }
