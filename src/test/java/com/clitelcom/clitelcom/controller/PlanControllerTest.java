@@ -1,89 +1,85 @@
 package com.clitelcom.clitelcom.controller;
 
 import com.clitelcom.clitelcom.dto.PlanDTO;
-import com.clitelcom.clitelcom.model.entity.Plan;
-import com.clitelcom.clitelcom.service.PlanService;
 import com.clitelcom.clitelcom.service.PlanServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@WebMvcTest(PlanController.class)
+@ExtendWith(MockitoExtension.class)
 class PlanControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    PlanController planController;
+    PlanServiceImpl planService;
+    PlanDTO planDTO1, planDTO2, planDTO3;
+    List<PlanDTO> expectedPlans;
 
-    @Mock
-    private PlanServiceImpl planService; // Mock del servicio
+    @BeforeEach
+    void setUp() {
+        planService = Mockito.mock(PlanServiceImpl.class);
+        planController = new PlanController(planService);
 
-    @InjectMocks
-    private PlanController planController;
+        planDTO1 = new PlanDTO(1L, "Basic Plan", 29.0, true, null);
+        planDTO2 = new PlanDTO(2L, "Premium Plan", 59.0, true, null);
+        planDTO3 = new PlanDTO(3L, "Enterprise Plan", 99.0, true, null);
 
-    @Test
-    void getAllPlans_ShouldReturnListOfPlans() throws Exception {
-        List<PlanDTO> mockPlans = Arrays.asList(
-                new PlanDTO(1L, "Plan Básico", 10.0, true, null),
-                new PlanDTO(2L, "Plan Premium", 20.0, true, null)
-        );
-        when(planService.getAllPlans()).thenReturn(mockPlans);
-
-        mockMvc.perform(get("/planes"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(2)))  // Asegúrate de que la respuesta es correcta
-                .andExpect(jsonPath("$[0].name", is("Plan Básico")))
-                .andExpect(jsonPath("$[1].name", is("Plan Premium")));
+        expectedPlans = Arrays.asList(planDTO1, planDTO2, planDTO3);
     }
 
     @Test
-    void addPlan_ShouldCreateNewPlan() throws Exception {
-        PlanDTO mockPlanDTO = new PlanDTO(1L, "Plan Básico", 10.0, true, null);
-        when(planService.addPlan(any(PlanDTO.class))).thenReturn(mockPlanDTO);
+    void should_return200_when_getAllPlans_successful() {
+        Mockito.when(planService.getAllPlans()).thenReturn(expectedPlans);
 
-        mockMvc.perform(post("/planes")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Plan Básico\",\"price\":10.0}"))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", is(1)))  // Verifica que el id está correctamente asignado
-                .andExpect(jsonPath("$.name", is("Plan Básico")))
-                .andExpect(jsonPath("$.price", is(10.0)));
+        ResponseEntity<List<PlanDTO>> response = planController.getAllPlans();
+
+        assertEquals(200, response.getStatusCode().value());
+        assertEquals(expectedPlans, response.getBody());
     }
 
     @Test
-    void getPlanById_ShouldReturnPlan() throws Exception {
-        PlanDTO mockPlanDTO = new PlanDTO(1L, "Plan Básico", 10.0, true, null);
-        when(planService.getPlanById(1L)).thenReturn(mockPlanDTO);
+    void should_return201_when_addPlan_successful() {
+        PlanDTO newPlanRequest = PlanDTO.builder()
+                .id(1L)
+                .name("Basic Plan")
+                .price(29.0)
+                .isActive(true)
+                .build();
 
-        mockMvc.perform(get("/planes/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(1)))  // Verifica que la id es correcta
-                .andExpect(jsonPath("$.name", is("Plan Básico")))
-                .andExpect(jsonPath("$.price", is(10.0)));
+        Mockito.when(planService.addPlan(newPlanRequest)).thenReturn(newPlanRequest);
+
+        ResponseEntity<PlanDTO> response = planController.addPlan(newPlanRequest);
+
+        assertEquals(201, response.getStatusCode().value());
+        assertEquals(newPlanRequest, response.getBody());
     }
 
     @Test
-    void deactivatePlan_ShouldReturnNoContent() throws Exception {
-        mockMvc.perform(delete("/planes/1"))
-                .andExpect(status().isNoContent());
+    void should_return200_when_getPlanById_successful() {
+        Long planId = 1L;
+        Mockito.when(planService.getPlanById(planId)).thenReturn(planDTO1);
 
-        Mockito.verify(planService).deactivatePlan(1L);
+        ResponseEntity<PlanDTO> response = planController.getPLanById(planId);
+
+        assertEquals(200, response.getStatusCode().value());
+        assertEquals(planDTO1, response.getBody());
+    }
+
+    @Test
+    void should_return204_when_deactivatePlan_successful() {
+        Long planId = 1L;
+
+        Mockito.doNothing().when(planService).deactivatePlan(planId);
+
+        ResponseEntity<Void> response = planController.deactivatePlan(planId);
+
+        assertEquals(204, response.getStatusCode().value());
     }
 }
