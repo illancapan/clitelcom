@@ -2,7 +2,7 @@ package com.clitelcom.clitelcom.controller;
 
 import com.clitelcom.clitelcom.dto.ContractDTO;
 import com.clitelcom.clitelcom.service.ContractServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/contracts")
 public class ContractController {
 
-    @Autowired
-    private ContractServiceImpl contractService;
+    private final ContractServiceImpl contractService;
 
     @GetMapping
     public ResponseEntity<List<ContractDTO>> getAllContracts() {

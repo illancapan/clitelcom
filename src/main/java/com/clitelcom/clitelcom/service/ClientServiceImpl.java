@@ -5,12 +5,11 @@ import com.clitelcom.clitelcom.model.entity.Client;
 import com.clitelcom.clitelcom.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ClientServiceImpl implements ClienteService {
+public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository clientRepository;
 

@@ -1,158 +1,168 @@
 package com.clitelcom.clitelcom.service;
 
+import com.clitelcom.clitelcom.controller.PlanController;
+import com.clitelcom.clitelcom.dto.ClientDTO;
+import com.clitelcom.clitelcom.dto.ContractDTO;
 import com.clitelcom.clitelcom.dto.PlanDTO;
-import com.clitelcom.clitelcom.model.entity.Client;
-import com.clitelcom.clitelcom.model.entity.Contract;
-import com.clitelcom.clitelcom.model.entity.Plan;
-import com.clitelcom.clitelcom.repository.PlanRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PlanServiceImplTest {
 
-    @Mock
-    private PlanRepository planRepository;
-
-    @Mock
-    private ModelMapper modelMapper;
-
-    @InjectMocks
-    private PlanServiceImpl planService;
+    PlanDTO planDTO1, planDTO2, planDTO3, planDTO, planNull, planNotNull;
+    List<PlanDTO> expectedPlans;
+    PlanServiceImpl planService;
+    PlanController planController;
+    ContractDTO contractBuildTest;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        ClientDTO clientBuildTest = ClientDTO.builder()
+                .id(1L)
+                .name("Pepe")
+                .run("12345678-9")
+                .address("Siempre viva")
+                .birthDate(LocalDate.now())
+                .contractsDTO(Collections.emptyList())
+                .build();
+
+        contractBuildTest = new ContractDTO(
+                1L,
+                clientBuildTest,
+                planDTO,
+                LocalDate.of(2024, 1, 1),
+                LocalDate.of(2025, 1, 1),
+                true
+        );
+
+        planNull = new PlanDTO(null, null, null, true, null);
+
+        planDTO1 = new PlanDTO(1L, "Basic Plan", 29.0, true, null);
+        planDTO2 = new PlanDTO(2L, "Premium Plan", 59.0, true, null);
+        planDTO3 = new PlanDTO(3L, "Enterprise Plan", 99.0, true, null);
+
+        planNotNull = PlanDTO.builder()
+                .id(1L)
+                .name("Basic Plan")
+                .price(29.0)
+                .isActive(true)
+                .contract(Collections.singletonList(contractBuildTest))
+                .build();
+
+        expectedPlans = Arrays.asList(planDTO1, planDTO2, planDTO3);
+
+        planService = Mockito.mock(PlanServiceImpl.class);
+        planController = new PlanController(planService);
     }
 
     @Test
-    void getAllPlans_ShouldReturnListOfPlans() {
-        Client client1 = new Client(
-                1L,
-                "Client A",
-                "RUN001",
-                "Address A",
-                LocalDate.of(1990, 1, 1),
-                null);
-        Client client2 = new Client(
-                2L,
-                "Client B",
-                "RUN002",
-                "Address B",
-                LocalDate.of(1985, 5, 10),
-                null);
+    void should_return200_when_getClientAll_successful() {
+        Mockito.when(planService.getAllPlans()).thenReturn(expectedPlans);
+        ResponseEntity<List<PlanDTO>> response = planController.getAllPlans();
 
-        Plan plan1 = new Plan(
-                1L,
-                "Plan A",
-                100.0,
-                true,null
-                );
-        Plan plan2 = new Plan(
-                2L,
-                "Plan B",
-                150.0,
-                true,
-                null);
-
-        Contract contract1 = new Contract(
-                1L,
-                client1,
-                plan1,
-                LocalDate.of(2023, 1, 1),
-                LocalDate.of(2023, 12, 31),
-                true);
-        Contract contract2 = new Contract(
-                2L,
-                client2,
-                plan2,
-                LocalDate.of(2023, 6, 1),
-                LocalDate.of(2024, 5, 31),
-                true);
-
-        plan1.setContract(Arrays.asList(contract1));
-        plan2.setContract(Arrays.asList(contract2));
-
-        when(planRepository.findAll()).thenReturn(Arrays.asList(plan1, plan2));
-
-        when(modelMapper.map(plan1, PlanDTO.class)).thenReturn(new PlanDTO(
-                1L,
-                "Plan A",
-                100.0,
-                true,
-                null));
-        when(modelMapper.map(plan2, PlanDTO.class)).thenReturn(new PlanDTO(
-                2L,
-                "Plan B",
-                150.0,
-                true,
-                null));
-
-        List<PlanDTO> plans = planService.getAllPlans();
-
-        assertEquals(2, plans.size());
-        assertEquals("Plan A", plans.get(0).getName());
-        assertEquals("Plan B", plans.get(1).getName());
-
-        verify(planRepository, times(1)).findAll();
-        verify(modelMapper, times(1)).map(plan1, PlanDTO.class);
-        verify(modelMapper, times(1)).map(plan2, PlanDTO.class);
+        Assertions.assertEquals(200, response.getStatusCode().value());
     }
 
     @Test
-    void getPlanById_ShouldReturnPlanDTO_WhenPlanExists() {
-        Plan plan = new Plan(
-                1L,
-                "Plan A",
-                100.0,
-                true,
-                null);
-        PlanDTO planDTO = new PlanDTO(
-                1L,
-                "Plan A",
-                100.0,
-                true,
-                null);
+    void should_return201_when_addPlan_successful() {
+        PlanDTO newPlanRequest = PlanDTO.builder()
+                .id(1L)
+                .name("Basic Plan")
+                .price(29.0)
+                .isActive(true)
+                .contract(Collections.singletonList(contractBuildTest))
+                .build();
 
-        when(planRepository.findById(1L)).thenReturn(java.util.Optional.of(plan));
-        when(modelMapper.map(plan, PlanDTO.class)).thenReturn(planDTO);
-        PlanDTO result = planService.getPlanById(1L);
+        PlanDTO createdPlanResponse = PlanDTO.builder()
+                .id(1L)
+                .name("Basic Plan")
+                .price(29.0)
+                .isActive(true)
+                .contract(Collections.singletonList(contractBuildTest))
+                .build();
 
-        assertNotNull(result);
-        assertEquals(1L, result.getId());
-        assertEquals("Plan A", result.getName());
+        Mockito.when(planService.addPlan(newPlanRequest)).thenReturn(createdPlanResponse);
 
-        verify(planRepository, times(1)).findById(1L);
-        verify(modelMapper, times(1)).map(plan, PlanDTO.class);
+        ResponseEntity<PlanDTO> response = planController.addPlan(newPlanRequest);
+
+        Assertions.assertEquals(201, response.getStatusCode().value());
+        Assertions.assertNotNull(response.getBody());
+        Assertions.assertEquals(createdPlanResponse, response.getBody());
     }
 
     @Test
-    void getPlanById_ShouldReturnNull_WhenPlanDoesNotExist() {
-        when(planRepository.findById(1L)).thenReturn(java.util.Optional.empty());
+    void should_returnPlan_when_addPlan_successful() {
+        PlanDTO newPlanRequest = PlanDTO.builder()
+                .id(1L)
+                .name("Basic Plan")
+                .price(29.0)
+                .isActive(true)
+                .contract(Collections.singletonList(contractBuildTest))
+                .build();
 
-        PlanDTO result = planService.getPlanById(1L);
+        PlanDTO createdPlanResponse = PlanDTO.builder()
+                .id(1L)
+                .name("Basic Plan")
+                .price(29.0)
+                .isActive(true)
+                .contract(Collections.singletonList(contractBuildTest))
+                .build();
 
-        assertNull(result);
+        Mockito.when(planService.addPlan(newPlanRequest)).thenReturn(createdPlanResponse);
 
-        verify(planRepository, times(1)).findById(1L);
-        verify(modelMapper, times(0)).map(any(), any());
+        ResponseEntity<PlanDTO> response = planController.addPlan(newPlanRequest);
+
+        Assertions.assertNotNull(response.getBody());
+        Assertions.assertEquals(createdPlanResponse, response.getBody());
     }
 
+    @Test
+    void should_return200_when_getPlanById_successful() {
+        Long planById = 1L;
+        Mockito.when(planService.getPlanById(planById)).thenReturn(planDTO1);
 
+        ResponseEntity<PlanDTO> response = planController.getPLanById(planById);
+
+        Assertions.assertEquals(200, response.getStatusCode().value());
+    }
+
+    @Test
+    void should_returnNonNullPlan_when_getPlanById_successful() {
+        Long planByIdNotNull = 1L;
+
+        Mockito.when(planService.getPlanById(planByIdNotNull)).thenReturn(planNotNull);
+
+        ResponseEntity<PlanDTO> response = planController.getPLanById(planByIdNotNull);
+
+        Assertions.assertNotNull(response.getBody(), "The response body should not be null.");
+
+        PlanDTO responseBody = response.getBody();
+        Assertions.assertNotNull(response.getBody(), "The response body should not be null.");
+
+        Assertions.assertNotNull(responseBody.getId(), "The ID should not be null.");
+        Assertions.assertNotNull(responseBody.getName(), "The name should not be null.");
+        Assertions.assertNotNull(responseBody.getPrice(), "The price should not be null.");
+        Assertions.assertNotNull(responseBody.getContract(), "The contract list should not be null.");
+    }
+
+    @Test
+    void should_return204_when_deactivatePlan_successful() {
+        Long planId = 1L;
+
+        Mockito.when(plan)
+
+    }
 }
+
+

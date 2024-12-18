@@ -27,9 +27,9 @@ public class PlanServiceImpl implements PlanService {
                 .collect(Collectors.toList());
     }
 
-
     @Override
-    public PlanDTO addPlan(Plan plan) {
+    public PlanDTO addPlan(PlanDTO planDTO) {
+        Plan plan = modelMapper.map(planDTO, Plan.class);
         Plan newPlan = planRepository.save(plan);
         return modelMapper.map(newPlan,PlanDTO.class);
     }

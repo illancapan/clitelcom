@@ -24,6 +24,5 @@ public class Plan {
     private boolean isActive = true;
 
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Contract> contract;
-
+    private List<Contract> contracts;
 }

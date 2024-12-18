@@ -36,7 +36,7 @@ class PlanControllerTest {
     private PlanServiceImpl planService; // Mock del servicio
 
     @InjectMocks
-    private PlanController planController; // Inyectamos el mock del servicio en el controlador
+    private PlanController planController;
 
     @Test
     void getAllPlans_ShouldReturnListOfPlans() throws Exception {
@@ -56,7 +56,7 @@ class PlanControllerTest {
     @Test
     void addPlan_ShouldCreateNewPlan() throws Exception {
         PlanDTO mockPlanDTO = new PlanDTO(1L, "Plan Básico", 10.0, true, null);
-        when(planService.addPlan(any(Plan.class))).thenReturn(mockPlanDTO);
+        when(planService.addPlan(any(PlanDTO.class))).thenReturn(mockPlanDTO);
 
         mockMvc.perform(post("/planes")
                         .contentType(MediaType.APPLICATION_JSON)

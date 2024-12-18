@@ -3,6 +3,7 @@ package com.clitelcom.clitelcom.service;
 import com.clitelcom.clitelcom.dto.ContractDTO;
 import com.clitelcom.clitelcom.model.entity.Contract;
 import com.clitelcom.clitelcom.repository.ContractRepository;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,26 +13,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ContractServiceImpl implements ContractService {
 
-    @Autowired
-    private ContractRepository contractRepository;
+    private final ContractRepository contractRepository;
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     @Override
     public List<ContractDTO> getAllContracts() {
         return contractRepository.findAll()
                 .stream()
                 .map(contract -> modelMapper.map(contract, ContractDTO.class))
-//                .map(contract -> new ContractDTO(
-//                        contract.getId(),
-//                        contract.getClient(),
-//                        contract.getPlan(),
-//                        contract.getStartDate(),
-//                        contract.getEndDate(),
-//                        contract.getIsActive()))
                 .collect(Collectors.toList());
     }
 
@@ -48,8 +41,8 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public Contract desactiveContract(Long id) {
-        var contract = contractRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Contrato no encontrado"));
+        Contract contract = contractRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Contract not found"));
 
         contract.setIsActive(false);
         contract.setEndDate(LocalDate.now());
@@ -63,9 +56,9 @@ public class ContractServiceImpl implements ContractService {
         long activeContracts = contractRepository.countByClientIdAndIsActiveTrue(clientId);
 
         if (activeContracts >= 2) {
-            return 0.1; // descuento del 10% del segundo contrato
+            return 0.1; // discount del 10% segundo contract
         }
-        return 0.0; // sin descuento
+        return 0.0; // sin discount
     }
 
 }

@@ -2,7 +2,7 @@ package com.clitelcom.clitelcom.service;
 
 import com.clitelcom.clitelcom.dto.ClientDTO;
 
-public interface ClienteService {
+public interface ClientService {
     ClientDTO createClient(ClientDTO clientDTO);
     ClientDTO updateClient(Long id, ClientDTO clientDTO);
     ClientDTO getClientById(Long id);
