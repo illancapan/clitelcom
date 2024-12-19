@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class PlanServiceImplTest {
 
-    PlanDTO planDTO1, planDTO2, planDTO3, planNotNull, planFalse;
+    PlanDTO planDTO1, planDTO2, planDTO3, planFalse;
     List<PlanDTO> expectedPlans;
     PlanServiceImpl planService;
     ContractDTO contractBuildTest;
