@@ -35,7 +35,7 @@ public class ContractController {
 
     @PutMapping("/deactivate/{id}")
     public ResponseEntity<Void> deactivateContract(@PathVariable Long id) {
-        contractService.desactiveContract(id);
+        contractService.deactiveContract(id);
         return ResponseEntity.noContent().build();
     }
 

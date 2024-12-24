@@ -6,6 +6,7 @@ import com.clitelcom.clitelcom.repository.ContractRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -39,15 +40,15 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public Contract desactiveContract(Long id) {
+    @Transactional
+    public void deactiveContract(Long id) {
         Contract contract = contractRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Contract not found"));
 
         contract.setActive(false);
         contract.setEndDate(LocalDate.now());
-        contract = contractRepository.save(contract);
 
-        return contract;
+        contractRepository.save(contract);
     }
 
     @Override
